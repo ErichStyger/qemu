@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2018-2019 Free Software Foundation, Inc.
+
+     Copying and distribution of this file, with or without modification,
+     are permitted in any medium without royalty provided the copyright
+     notice and this notice are preserved.  -->
+
+<!-- https://sourceware.org/gdb/current/onlinedocs/gdb.html/Target-Description-Format.html#Target-Description-Format -->
+
+<!DOCTYPE feature SYSTEM "gdb-target.dtd">
+
+<feature name="org.gnu.gdb.ezh.cpu">
+  <reg name="r0" bitsize="32" type="int"  regnum="0"/>
+  <reg name="r1" bitsize="32" type="int"  regnum="1"/>
+  <reg name="r2" bitsize="32" type="int"  regnum="2"/>
+  <reg name="r3" bitsize="32" type="int"  regnum="3"/>
+  <reg name="r4" bitsize="32" type="int"  regnum="4"/>
+  <reg name="r5" bitsize="32" type="int"  regnum="5"/>
+  <reg name="r6" bitsize="32" type="int"  regnum="6"/>
+  <reg name="r7" bitsize="32" type="int"  regnum="7"/>
+  <reg name="gpo" bitsize="32" type="int" regnum="8"/>
+  <reg name="gpd" bitsize="32" type="int" regnum="9"/>
+  <reg name="gpi" bitsize="32" type="int" regnum="10"/>
+  <reg name="cfs" bitsize="32" type="int" regnum="11"/>
+  <reg name="cfm" bitsize="32" type="int" regnum="12"/>
+  <reg name="sp" bitsize="32" type="int"  regnum="13"/>
+  <reg name="pc" bitsize="32" type="int"  regnum="14"/>
+  <reg name="ra" bitsize="32" type="int"  regnum="15"/>
+  <reg name="ic" bitsize="32" type="int"  regnum="16"/>
+</feature>

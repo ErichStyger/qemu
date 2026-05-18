@@ -1,0 +1,58 @@
+#
+# EZH instruction decode definitions.
+#
+# Copyright (c) 2026 Stefano Nicora
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, see <http://www.gnu.org/licenses/>.
+#
+
+#define E_LDR(dest, source, offset8s) 0x1 + (0 << 19) + (dest << 10) + (source << 14) + (offset8s << 24) + (0 << 20) + (1 << 18) + (0 << 21) + (EU << 5)
+&rd_rs_offset8s     rd rs offset8s
+@op_rd_rs_offset8s  offset8s:8 ...... rs:4 rd:4 ...... .... &rd_rs_offset8s
+E_LDR               .... .... 0000 01 .... .... 000000 0001 @op_rd_rs_offset8s
+
+#define E_GOSUB(a30) 0x03 + a30
+&rd_addr30imm       addr30imm
+@op_addr30imm       addr30imm:30                         .. &rd_addr30imm
+E_GOSUB             .... .... .... .... .... .... .... ..11 @op_addr30imm
+
+#define EU (0)
+#define E_LOAD_IMM(dest, imm11s) 0x0 + (dest << 10) + ((imm11s & 0x7ff) << 20) + (1 << 18) + (EU << 5)
+&rd_imm11s          rd imm11s 
+@op_rd_imm11s	    . imm11s:11   .. .... rd:4 .. .... .... &rd_imm11s
+E_LOAD_IMM	        0 ........... 01 0000 .... 00 0000 0000 @op_rd_imm11s
+
+E_NOP               0000 0000 0000 0000 0000 0000 0001 0010 
+
+#define E_BSET_IMM(dest, rdata, bit5) 0x18 + (dest << 10) + (rdata << 14) + (0 << 9) + (EU << 5) + ((bit5 & 0x1f) << 24) + (2 << 29) + (0 << 18) + (1 << 31)
+#E_BSET_IMM(EZH_GPD, EZH_GPD, EZH_OP_1);  /* set pin as output, direction bit = 1 */
+&rd_rs_bit5     rd rs bit5
+@op_rd_rs_bit5  ... bit5:5 .... .. rs:4 rd:4 .. .... .... &rd_rs_bit5
+E_BSET_IMM      110 .....  0000 00 .... .... 00 0001 1000 @op_rd_rs_bit5
+  
+#define E_BCLR_IMM(dest, rdata, bit5) 0x18 + (dest << 10) + (rdata << 14) + (0 << 9) + (EU << 5) + ((bit5 & 0x1f) << 24) + (1 << 29) + (0 << 18) + (0 << 31)
+#E_BCLR_IMM(EZH_GPO, EZH_GPO, EZH_OP_1);  /* clear pin*/
+E_BCLR_IMM      001. .... 0000 00.. .... ..00 0001 1000 @op_rd_rs_bit5
+  
+#E_LABEL("loop");
+  
+#define E_BTOG_IMM(dest, rdata, bit5) 0x18 + (dest << 10) + (rdata << 14) + (0 << 9) + (EU << 5) + ((bit5 & 0x1f) << 24) + (3 << 29) + (0 << 18) + (1 << 31)
+#E_BTOG_IMM(EZH_GPO, EZH_GPO, EZH_OP_1);  /* toggle pin */
+E_BTOG_IMM      111. .... 0000 00.. .... ..00 0001 1000 @op_rd_rs_bit5
+  
+#define E_GOTO(a21) 0x15 + (1 << 9) + a21 * 512
+#E_GOTO("loop");
+&a21            a21
+@op_a21         a21:21                    ... .... .... &a21
+E_GOTO          .... .... .... .... .... .010 0001 0101 @op_a21

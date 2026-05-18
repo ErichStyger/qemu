@@ -1,0 +1,5 @@
+config MCXN947
+    bool
+    default y
+    select EZH
+    select UNIMP
