@@ -68,7 +68,6 @@ static TCGTBCPUState ezh_get_tb_cpu_state(CPUState *cs)
         flags |= TB_FLAGS_SKIP;
     }
 
-    // return (TCGTBCPUState){ .pc = env->pc_w * 2, .flags = flags };
     return (TCGTBCPUState){ .pc = env->s_cpu_PC, .flags = flags };
 }
 
@@ -77,14 +76,12 @@ static void ezh_cpu_synchronize_from_tb(CPUState *cs,
 {
     tcg_debug_assert(!tcg_cflags_has(cs, CF_PCREL));
     cpu_env(cs)->s_cpu_PC = tb->pc;
-    // cpu_env(cs)->pc_w = tb->pc / 2; /* internally PC points to words */
 }
 
 static void ezh_restore_state_to_opc(CPUState *cs,
                                      const TranslationBlock *tb,
                                      const uint64_t *data)
 {
-    // cpu_env(cs)->pc_w = data[0];
     cpu_env(cs)->s_cpu_PC = data[0];
 }
 
