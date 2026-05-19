@@ -76,4 +76,4 @@
 { 'include': 'cryptodev.json' }
 { 'include': 'cxl.json' }
 { 'include': 'uefi.json' }
-{ 'include': 'ezh.json' }
+#{ 'include': 'ezh.json' }
