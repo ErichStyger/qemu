@@ -1,5 +1,5 @@
 /*
- * AVR loader helpers
+ * EZH loader helpers
  *
  * Copyright (c) 2019-2020 Philippe Mathieu-Daudé
  *

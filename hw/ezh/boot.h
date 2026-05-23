@@ -1,5 +1,5 @@
 /*
- * AVR loader helpers
+ * EZH loader helpers
  *
  * Copyright (c) 2019-2020 Philippe Mathieu-Daudé
  *
@@ -8,16 +8,16 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#ifndef HW_AVR_BOOT_H
-#define HW_AVR_BOOT_H
+#ifndef HW_EZH_BOOT_H
+#define HW_EZH_BOOT_H
 
 #include "hw/core/boards.h"
 #include "cpu.h"
 
 /**
- * avr_load_firmware:   load an image into a memory region
+ * ezh_load_firmware:   load an image into a memory region
  *
- * @cpu:        Handle a AVR CPU object
+ * @cpu:        Handle of a EZH CPU object
  * @ms:         A MachineState
  * @mr:         Memory Region to load into
  * @firmware:   Path to the firmware file (raw binary or ELF format)

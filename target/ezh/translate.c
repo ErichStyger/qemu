@@ -40,7 +40,6 @@
 #define REG(x) (cpu_r[x])
 
 static TCGv_i32 cpu_r[NUMBER_OF_CPU_REGISTERS];
-
 static TCGv_i32 cpu_skip;
 
 #define EZH_R0              0x00
@@ -108,29 +107,23 @@ static const char reg_names[NUMBER_OF_CPU_REGISTERS][32] = {
 #define DISAS_LOOKUP DISAS_TARGET_1  /* We have a variable condition exit.  */
 #define DISAS_CHAIN  DISAS_TARGET_2  /* We have a single condition exit.  */
 
-typedef struct DisasContext DisasContext;
-
 /* This is the state at translation time. */
-struct DisasContext {
+typedef struct DisasContext {
     DisasContextBase base;
 
-    CPUEZHState *env;
-    CPUState *cs;
+    CPUEZHState *env;   /* custom type */
+    CPUState *cs;       /* QEMU-internal type*/
 
-    target_long npc;
+    target_long npc;    /* next program counter (pc) */
     uint32_t opcode;
 
     TCGv_i32 skip_var0;
     TCGv_i32 skip_var1;
     TCGCond skip_cond;
-};
+} DisasContext;
 
 void ezh_cpu_tcg_init(void)
 {
-    #if DEBUG == 1
-    qemu_log("cpu_tcg_init called");
-    #endif
-
 #define EZH_REG_OFFS(x) offsetof(CPUEZHState, x)
     cpu_GPO = tcg_global_mem_new_i32(tcg_env, EZH_REG_OFFS(s_cpu_GPO), "GPO");
     cpu_GPD = tcg_global_mem_new_i32(tcg_env, EZH_REG_OFFS(s_cpu_GPD), "GPD");
@@ -205,7 +198,7 @@ static bool trans_E_LDR(DisasContext *ctx, arg_E_LDR *a)
 
     /* update output registers */
     tcg_gen_add_i32(Rs, Rs, Rr);
-    tcg_gen_qemu_ld_i32(Rd, Rs, MMU_CODE_IDX, MO_UL);
+    tcg_gen_qemu_ld_i32(Rd, Rs, 0, MO_UL);
     ctx->env->s_cpu_IC += 1;
     return true;
 }
@@ -242,8 +235,7 @@ static bool trans_E_GOSUB(DisasContext *ctx, arg_E_GOSUB *a)
     qemu_log("\ntrans_E_GOSUB called");
     qemu_log("\naddr30imm: 0b%b", a->addr30imm);
     #endif
-    // gen_goto_tb(ctx, 0, a->addr30imm);
-    gen_goto_tb(ctx, 0, a->addr30imm * 4);
+    gen_goto_tb(ctx, 0, a->addr30imm);
     ctx->env->s_cpu_IC += 1;
     return true;
 }
@@ -257,7 +249,7 @@ static bool trans_E_BSET_IMM(DisasContext *ctx, arg_E_BSET_IMM *a)
     #if DEBUG == 1
     qemu_log("\ntrans_E_BSET_IMM called");
     qemu_log("\nrd:   0b%b", a->rd);
-    // qemu_log("\nhello world");
+    qemu_log("\nplaceholder"); /* for some reason without this placeholder rd doesn't get printed. needs to be investigated */
     qemu_log("\rdata: 0b%b", a->rs);
     qemu_log("\nbit5: 0b%b", a->bit5);
     #endif
@@ -504,7 +496,6 @@ static void ezh_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
     translate(ctx);
     ctx->base.is_jmp = DISAS_TOO_MANY;
 
-    // ctx->base.pc_next = ctx->npc * 2;
     ctx->base.pc_next = ctx->npc;
 
     if (skip_label) {

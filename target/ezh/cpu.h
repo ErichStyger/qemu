@@ -2,6 +2,7 @@
  * QEMU EZH CPU
  *
  * Copyright (c) 2016-2020 Michael Rolnik
+ * Copyright (c) 2026 Stefano Nicora
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,25 +30,11 @@
 
 #define CPU_RESOLVING_TYPE TYPE_EZH_CPU
 
-/*
- * AVR has two memory spaces, data & code.
- * e.g. both have 0 address
- * ST/LD instructions access data space
- * LPM/SPM and instruction fetching access code memory space
- */
-#define MMU_CODE_IDX 0
-#define MMU_DATA_IDX 1
-
 #define EXCP_RESET 1
 #define EXCP_INT(n) (EXCP_RESET + (n) + 1)
 
 /* Number of CPU scratch registers */
 #define NUMBER_OF_CPU_REGISTERS (8)
-
-/* Flash program memory */
-#define OFFSET_CODE               (0x00000000)
-/* CPU registers, IO registers, and SRAM */
-#define OFFSET_DATA               (0x00000001)
 
 /* EZH controller base address (per-part variant) 
  * LPC5410x:                      (0x4004C000)
@@ -111,10 +98,7 @@ struct ArchCPU {
 
     CPUEZHState env;
 
-    MemoryRegion cpu_reg1;
-
-    /* Initial value of stack pointer */
-    uint32_t init_sp;
+    MemoryRegion cpu_reg;
 };
 
 /**
@@ -129,7 +113,7 @@ struct EZHCPUClass {
     ResettablePhases parent_phases;
 };
 
-extern const struct VMStateDescription vms_ezh_cpu;
+// extern const struct VMStateDescription vms_ezh_cpu; /* unimplemented machine.c */
 
 void ezh_cpu_do_interrupt(CPUState *cpu);
 bool ezh_cpu_exec_interrupt(CPUState *cpu, int int_req);
@@ -150,7 +134,6 @@ enum {
 
 static inline int cpu_interrupts_enabled(CPUEZHState *env)
 {
-    // return env->sregI != 0;
     return 0;
 }
 
@@ -158,6 +141,6 @@ bool ezh_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
                       MMUAccessType access_type, int mmu_idx,
                       bool probe, uintptr_t retaddr);
 
-extern const MemoryRegionOps avr_cpu_reg1;
+extern const MemoryRegionOps ezh_cpu_reg;
 
 #endif /* QEMU_EZH_CPU_H */

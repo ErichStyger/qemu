@@ -2,6 +2,7 @@
  * QEMU EZH CPU
  *
  * Copyright (c) 2019-2020 Michael Rolnik
+ * Copyright (c) 2026 Stefano Nicora
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,15 +35,12 @@ static void ezh_cpu_set_pc(CPUState *cs, vaddr value)
 {
     EZHCPU *cpu = EZH_CPU(cs);
     cpu->env.s_cpu_PC = value;
-    // cpu->env.pc_w = value / 2; /* internally PC points to words */
 }
 
 static vaddr ezh_cpu_get_pc(CPUState *cs)
 {
     EZHCPU *cpu = EZH_CPU(cs);
-
     return cpu->env.s_cpu_PC;
-    // return cpu->env.pc_w * 2;
 }
 
 static bool ezh_cpu_has_work(CPUState *cs)
@@ -53,7 +51,7 @@ static bool ezh_cpu_has_work(CPUState *cs)
 
 static int ezh_cpu_mmu_index(CPUState *cs, bool ifetch)
 {
-    return ifetch ? MMU_CODE_IDX : MMU_DATA_IDX;
+    return 0; /* no MMU available => return 0 */
 }
 
 static TCGTBCPUState ezh_get_tb_cpu_state(CPUState *cs)
@@ -113,7 +111,7 @@ static void ezh_cpu_reset_hold(Object *obj, ResetType type)
     env->s_cpu_IC = 0;
     env->s_cpu_PC = 0;
     env->s_cpu_RA = 0;
-    env->s_cpu_SP = cpu->init_sp;
+    env->s_cpu_SP = 0;
 
     env->skip = 0;
 
@@ -123,7 +121,7 @@ static void ezh_cpu_reset_hold(Object *obj, ResetType type)
 static void ezh_cpu_disas_set_info(const CPUState *cpu, disassemble_info *info)
 {
     info->endian = BFD_ENDIAN_BIG;
-    info->mach = bfd_arch_avr;
+    info->mach = bfd_arch_unknown;
     info->print_insn = ezh_print_insn;
 }
 
@@ -145,10 +143,8 @@ static void ezh_cpu_realizefn(DeviceState *dev, Error **errp)
 
     mcc->parent_realize(dev, errp);
 
-    memory_region_init_io(&cpu->cpu_reg1, OBJECT(cpu), &avr_cpu_reg1, env,
-                          "avr-cpu-reg1", 32);
-    memory_region_add_subregion(get_system_memory(),
-                                OFFSET_DATA, &cpu->cpu_reg1);
+    memory_region_init_io(&cpu->cpu_reg, OBJECT(cpu), &ezh_cpu_reg, env,
+                          "ezh-cpu-reg", 32);
 }
 
 static void ezh_cpu_set_int(void *opaque, int irq, int level)
@@ -177,10 +173,6 @@ static void ezh_cpu_initfn(Object *obj)
     qdev_init_gpio_in(DEVICE(cpu), ezh_cpu_set_int,
                       sizeof(cpu->env.intsrc) * 8);
 }
-
-// static const Property ezh_cpu_properties[] = {
-//     DEFINE_PROP_UINT32("init-sp", EZHCPU, init_sp, 0),
-// };
 
 static ObjectClass *ezh_cpu_class_by_name(const char *cpu_model)
 {
@@ -258,8 +250,6 @@ static void ezh_cpu_class_init(ObjectClass *oc, const void *data)
 
     device_class_set_parent_realize(dc, ezh_cpu_realizefn, &mcc->parent_realize);
 
-    // device_class_set_props(dc, ezh_cpu_properties);
-
     resettable_class_set_parent_phases(rc, NULL, ezh_cpu_reset_hold, NULL,
                                        &mcc->parent_phases);
 
@@ -268,7 +258,7 @@ static void ezh_cpu_class_init(ObjectClass *oc, const void *data)
     cc->dump_state = ezh_cpu_dump_state;
     cc->set_pc = ezh_cpu_set_pc;
     cc->get_pc = ezh_cpu_get_pc;
-    dc->vmsd = &vms_ezh_cpu;
+    //dc->vmsd = &vms_ezh_cpu; /* unimplemented machine.c */
     cc->sysemu_ops = &ezh_sysemu_ops;
     cc->disas_set_info = ezh_cpu_disas_set_info;
     cc->gdb_read_register = ezh_cpu_gdb_read_register;

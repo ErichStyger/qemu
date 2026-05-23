@@ -1,7 +1,8 @@
 /*
- * QEMU ATmega MCU
+ * QEMU EZH
  *
  * Copyright (c) 2019-2020 Philippe Mathieu-Daudé
+ * Copyright (c) 2026 Stefano Nicora
  *
  * This work is licensed under the terms of the GNU GPLv2 or later.
  * See the COPYING file in the top-level directory.
@@ -11,16 +12,11 @@
 #ifndef EZH_H
 #define EZH_H
 
-#include "hw/char/avr_usart.h"
-#include "hw/timer/avr_timer16.h"
-#include "hw/misc/avr_power.h"
 #include "target/ezh/cpu.h"
+#include "hw/core/sysbus.h"     /* SysBusDevice */
 #include "qom/object.h"
 
 #define TYPE_EZH     "ezh"
-
-#define TIMER_MAX 6
-#define GPIO_MAX 12
 
 typedef struct EZHState {
     /*< private >*/
@@ -29,15 +25,11 @@ typedef struct EZHState {
 
     EZHCPU cpu;
     MemoryRegion flash;
-    MemoryRegion eeprom;
     MemoryRegion sram;
     MemoryRegion sram_io;
-    DeviceState *io;
-    AVRTimer16State timer[TIMER_MAX];
-    uint64_t xtal_freq_hz;
+    DeviceState *io;        /* hw/core/qdev.h */
 } EZHState;
 
-DECLARE_INSTANCE_CHECKER(EZHState, EZH,
-                         TYPE_EZH)
+DECLARE_INSTANCE_CHECKER(EZHState, EZH, TYPE_EZH)
 
 #endif /* EZH_H */

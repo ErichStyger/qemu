@@ -1,5 +1,5 @@
 /*
- * QEMU AVR CPU
+ * QEMU EZH CPU
  *
  * Copyright (c) 2016-2020 Michael Rolnik
  *
@@ -22,6 +22,11 @@
 #include "cpu.h"
 #include "migration/cpu.h"
 
+/* currently unimplemented
+ * needed if QEMU needs to be portable
+ * e.g. move instance from one phyisical device
+ * to another
+ */
 // static int get_segment(QEMUFile *f, void *opaque, size_t size,
 //                        const VMStateField *field)
 // {
@@ -49,15 +54,15 @@
 //     .put = put_segment,
 // };
 
-const VMStateDescription vms_ezh_cpu = {
-    .name = "cpu",
-    .version_id = 1,
-    .minimum_version_id = 1,
-    .fields = (const VMStateField[]) {
-        // VMSTATE_UINT32(env.pc_w, EZHCPU),
+// const VMStateDescription vms_ezh_cpu = {
+//     .name = "cpu",
+//     .version_id = 1,
+//     .minimum_version_id = 1,
+//     .fields = (const VMStateField[]) {
+//         // VMSTATE_UINT32(env.pc_w, EZHCPU),
 
-        VMSTATE_UINT32_ARRAY(env.r, EZHCPU, NUMBER_OF_CPU_REGISTERS),
+//         VMSTATE_UINT32_ARRAY(env.r, EZHCPU, NUMBER_OF_CPU_REGISTERS),
 
-        VMSTATE_END_OF_LIST()
-    }
-};
+//         VMSTATE_END_OF_LIST()
+//     }
+// };
