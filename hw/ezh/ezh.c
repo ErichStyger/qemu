@@ -31,42 +31,47 @@ typedef struct EZHClass {
     const char *uc_name;
     const char *cpu_type;
     size_t flash_size;
-    size_t sram_size;
+    size_t ram_size;
     size_t io_size;
 } EZHClass;
 
 DECLARE_CLASS_CHECKERS(EZHClass, EZH, TYPE_EZH)
+
+static uint64_t ezh_io_read(void *opaque, hwaddr addr, unsigned size) {
+    return 0;
+}
+
+static void ezh_io_write(void *opaque, hwaddr addr, uint64_t value, unsigned size) {
+}
+
+static const MemoryRegionOps ezh_io_ops = {
+    .read = ezh_io_read,
+    .write = ezh_io_write,
+    .endianness = DEVICE_NATIVE_ENDIAN,
+};  
 
 static void ezh_realize(DeviceState *dev, Error **errp)
 {
     EZHState *s = EZH(dev);
     const EZHClass *mc = EZH_GET_CLASS(dev);
 
-    /* CPU */
+    /* CPU initialization */
     object_initialize_child(OBJECT(dev), "cpu", &s->cpu, mc->cpu_type);
     qdev_realize(DEVICE(&s->cpu), NULL, &error_abort);
 
-    /* SRAM */
-    int sram_io_size = TARGET_PAGE_SIZE - mc->io_size;
-    void *sram_io_mem = g_malloc0(sram_io_size);
+    MemoryRegion *sysmem = get_system_memory();
 
-    memory_region_init_ram_device_ptr(&s->sram_io, OBJECT(dev), "sram-as-io", sram_io_size, sram_io_mem);
-    memory_region_add_subregion(get_system_memory(), 0 + mc->io_size, &s->sram_io);
-    vmstate_register_ram(&s->sram_io, dev);
-    memory_region_init_ram(&s->sram, OBJECT(dev), "sram", mc->sram_size - sram_io_size, &error_abort);
-    memory_region_add_subregion(get_system_memory(), 0 + TARGET_PAGE_SIZE, &s->sram);
+    /* Flash memory region */
+    memory_region_init_rom(&s->flash, OBJECT(dev), "ezh.flash", mc->flash_size, &error_fatal);
+    memory_region_add_subregion(sysmem, FLASH_START_ADDR, &s->flash);
 
-    /* Flash */
-    memory_region_init_rom(&s->flash, OBJECT(dev),
-                           "flash", mc->flash_size, &error_fatal);
-    memory_region_add_subregion(get_system_memory(), 0, &s->flash);
+    /* RAM memory region */
+    memory_region_init_ram(&s->ram, OBJECT(dev), "ezh.ram", mc->ram_size, &error_abort);
+    memory_region_add_subregion(sysmem, RAM_START_ADDR, &s->ram);
 
-    /* I/O */
-    s->io = qdev_new(TYPE_UNIMPLEMENTED_DEVICE);
-    qdev_prop_set_string(s->io, "name", "I/O");
-    qdev_prop_set_uint64(s->io, "size", mc->io_size);
-    sysbus_realize_and_unref(SYS_BUS_DEVICE(s->io), &error_fatal);
-    sysbus_mmio_map_overlap(SYS_BUS_DEVICE(s->io), 0, 0, -1234);
+    /* I/O memory region */
+    memory_region_init_io(&s->io, OBJECT(dev), &ezh_io_ops, s, "ezh.io", mc->io_size);
+    memory_region_add_subregion(sysmem, IO_START_ADDR, &s->io);
 }
 
 static void ezh_class_init(ObjectClass *oc, const void *data)
@@ -75,11 +80,10 @@ static void ezh_class_init(ObjectClass *oc, const void *data)
     EZHClass *mc = EZH_CLASS(oc);
 
     dc->realize = ezh_realize;
-    dc->user_creatable = false;
     mc->cpu_type = TYPE_EZH_CPU;
-    mc->flash_size = 2000 * KiB;
-    mc->sram_size = 512 * KiB;
-    mc->io_size = 256;
+    mc->flash_size = RAM_START_ADDR - FLASH_START_ADDR ;
+    mc->ram_size = IO_START_ADDR - RAM_START_ADDR;
+    mc->io_size = 0xBFFFFFFF - IO_START_ADDR;               /* refMan. page 47 */
 }
 
 /* constructor | TypeInfo contains all neccessary information about the machine */

@@ -18,6 +18,11 @@
 
 #define TYPE_EZH     "ezh"
 
+/* refMan. page 47 */
+#define FLASH_START_ADDR    (0x00000000)
+#define RAM_START_ADDR      (0x20000000)
+#define IO_START_ADDR       (0x40000000)
+
 typedef struct EZHState {
     /*< private >*/
     SysBusDevice parent_obj;
@@ -25,9 +30,8 @@ typedef struct EZHState {
 
     EZHCPU cpu;
     MemoryRegion flash;
-    MemoryRegion sram;
-    MemoryRegion sram_io;
-    DeviceState *io;        /* hw/core/qdev.h */
+    MemoryRegion ram;
+    MemoryRegion io;
 } EZHState;
 
 DECLARE_INSTANCE_CHECKER(EZHState, EZH, TYPE_EZH)
