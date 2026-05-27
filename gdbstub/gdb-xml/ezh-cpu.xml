@@ -26,5 +26,5 @@
   <reg name="sp" bitsize="32" type="int"  regnum="13"/>
   <reg name="pc" bitsize="32" type="int"  regnum="14"/>
   <reg name="ra" bitsize="32" type="int"  regnum="15"/>
-  <reg name="ic" bitsize="32" type="int"  regnum="16"/>
+  <!-- <reg name="ic" bitsize="32" type="int"  regnum="16"/> -->
 </feature>
