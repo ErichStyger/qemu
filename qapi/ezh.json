@@ -1,0 +1,54 @@
+# -*- Mode: Python -*-
+# vim: filetype=python
+#
+# Copyright (C) 2026 Stefano Nicora
+#
+# This work is licensed under the terms of the GNU GPL, version 2 or later.
+# See the COPYING file in the top-level directory.
+
+##
+# @EzhGetRegisterReturn:
+#
+# Return type for ezh-get-register.
+#
+# @value: Register value.
+##
+{ 'struct': 
+    'EzhGetRegisterReturn', 'data': 
+    { 
+        'value': 'int' 
+    } 
+}
+
+##
+# @ezh-get-register:
+#
+# Read an EZH CPU register.
+#
+# @reg: Register index.
+#
+# Returns: Register value.
+##
+{ 'command': 
+    'ezh-get-register', 'data': 
+    { 
+        'reg': 'int' 
+    }, 
+    'returns': 'EzhGetRegisterReturn' 
+}
+
+##
+# @ezh-set-register:
+#
+# Write an EZH CPU register.
+#
+# @reg: Register index.
+#
+# @value: Value to write.
+##
+{ 'command': 
+    'ezh-set-register', 'data': 
+    { 
+        'reg': 'int', 'value': 'int' 
+    } 
+}

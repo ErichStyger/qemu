@@ -11,7 +11,8 @@ ezh_ss.add(files(
   'translate.c',
   'helper.c',
   'cpu.c',
-  'disas.c'))
+  'disas.c',
+  'qmp.c'))
 
 ezh_common_system_ss = ss.source_set()
 ezh_common_system_ss.add(files('gdbstub.c'))

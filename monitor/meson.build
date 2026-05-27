@@ -6,4 +6,6 @@ system_ss.add(files(
   'hmp.c',
   'qemu-config-qmp.c',
   'qmp-cmds.c',
+  'qmp-cmds-ezh.c',
+  'qmp-cmds-ezh-stub.c',
 ))
