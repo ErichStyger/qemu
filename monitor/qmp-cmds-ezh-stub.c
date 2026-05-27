@@ -24,10 +24,10 @@
 #include "qemu/osdep.h"
 #include "hw/ezh/ezh-qmp.h"
 
-__attribute__((weak)) bool ezh_cpu_get_register(CPUState *cs, int64_t reg, int64_t *value) {
+__attribute__((weak)) bool ezh_get_register(CPUState *cs, int64_t reg, int64_t *value) {
     return false;
 }
 
-__attribute__((weak)) bool ezh_cpu_set_register(CPUState *cs, int64_t reg, int64_t value) {
+__attribute__((weak)) bool ezh_set_register(CPUState *cs, int64_t reg, int64_t value) {
     return false;
 }

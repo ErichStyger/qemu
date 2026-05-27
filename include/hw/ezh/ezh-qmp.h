@@ -25,8 +25,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-bool ezh_cpu_get_register(CPUState *cs, int64_t reg, int64_t *value);
+bool ezh_get_register(CPUState *cs, int64_t reg, int64_t *value);
 
-bool ezh_cpu_set_register(CPUState *cs, int64_t reg, int64_t value);
+bool ezh_set_register(CPUState *cs, int64_t reg, int64_t value);
 
 #endif

@@ -46,7 +46,7 @@ EzhGetRegisterReturn *qmp_ezh_get_register(int64_t reg, Error **errp)
         return NULL;
     }
 
-    if (!ezh_cpu_get_register(cs, reg, &value)) {
+    if (!ezh_get_register(cs, reg, &value)) {
         error_setg(errp, "Invalid EZH register or CPU type");
         return NULL;
     }
@@ -64,7 +64,7 @@ void qmp_ezh_set_register(int64_t reg, int64_t value, Error **errp)
         return;
     }
 
-    if (!ezh_cpu_set_register(cs, reg, value)) {
+    if (!ezh_set_register(cs, reg, value)) {
         error_setg(errp, "Invalid EZH register or CPU type");
     }
 }
