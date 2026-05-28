@@ -154,8 +154,7 @@ void ezh_cpu_tcg_init(void)
 
 static uint32_t next_insn(DisasContext *ctx)
 {
-    /* todo: change back to LE after testing */
-    uint32_t insn = translator_ldl_end(ctx->env, &ctx->base, ctx->npc, MO_BE);
+    uint32_t insn = translator_ldl_end(ctx->env, &ctx->base, ctx->npc, MO_LE);
     ctx->npc += 4;
 
     return insn;
