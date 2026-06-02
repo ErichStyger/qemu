@@ -110,8 +110,6 @@ struct EZHCPUClass {
     ResettablePhases parent_phases;
 };
 
-// extern const struct VMStateDescription vms_ezh_cpu; /* unimplemented machine.c */
-
 void ezh_cpu_do_interrupt(CPUState *cpu);
 bool ezh_cpu_exec_interrupt(CPUState *cpu, int int_req);
 hwaddr ezh_cpu_get_phys_page_debug(CPUState *cpu, vaddr addr);

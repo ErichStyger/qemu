@@ -128,8 +128,8 @@ static void ezh_cpu_disas_set_info(const CPUState *cpu, disassemble_info *info)
 static void ezh_cpu_realizefn(DeviceState *dev, Error **errp)
 {
     CPUState *cs = CPU(dev);
-    EZHCPUState *env = cpu_env(cs);
-    EZHCPU *cpu = env_archcpu(env);
+    EZHCPUState *env = cpu_env(cs);             /* generated from hw/core/cpu.h */
+    EZHCPU *cpu = env_archcpu(env);             /* generated from exec/cpu-common.h */
     EZHCPUClass *mcc = EZH_CPU_GET_CLASS(dev);
     Error *local_err = NULL;
 
@@ -258,7 +258,6 @@ static void ezh_cpu_class_init(ObjectClass *oc, const void *data)
     cc->dump_state = ezh_cpu_dump_state;
     cc->set_pc = ezh_cpu_set_pc;
     cc->get_pc = ezh_cpu_get_pc;
-    //dc->vmsd = &vms_ezh_cpu; /* unimplemented machine.c */
     cc->sysemu_ops = &ezh_sysemu_ops;
     cc->disas_set_info = ezh_cpu_disas_set_info;
     cc->gdb_read_register = ezh_cpu_gdb_read_register;

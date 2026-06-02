@@ -17,8 +17,6 @@ ezh_ss.add(files(
 ezh_common_system_ss = ss.source_set()
 ezh_common_system_ss.add(files('gdbstub.c'))
 
-ezh_system_ss.add(files('machine.c'))
-
 target_arch += {'ezh': ezh_ss}
 target_system_arch += {'ezh': ezh_system_ss}
 target_common_system_arch += {'ezh': ezh_common_system_ss}
