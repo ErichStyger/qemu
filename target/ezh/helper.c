@@ -119,14 +119,6 @@ bool ezh_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
     return true;
 }
 
-void helper_sleep(EZHCPUState *env)
-{
-    CPUState *cs = env_cpu(env);
-
-    cs->exception_index = EXCP_HLT;
-    cpu_loop_exit(cs);
-}
-
 void helper_unsupported(EZHCPUState *env)
 {
     CPUState *cs = env_cpu(env);
@@ -141,27 +133,6 @@ void helper_unsupported(EZHCPUState *env)
         cpu_dump_state(cs, stderr, 0);
     }
     cpu_loop_exit(cs);
-}
-
-void helper_debug(EZHCPUState *env)
-{
-    CPUState *cs = env_cpu(env);
-
-    cs->exception_index = EXCP_DEBUG;
-    cpu_loop_exit(cs);
-}
-
-void helper_break(EZHCPUState *env)
-{
-    CPUState *cs = env_cpu(env);
-
-    cs->exception_index = EXCP_DEBUG;
-    cpu_loop_exit(cs);
-}
-
-void helper_wdr(EZHCPUState *env)
-{
-    qemu_log_mask(LOG_UNIMP, "WDG reset (not implemented)\n");
 }
 
 /*
@@ -198,22 +169,3 @@ const MemoryRegionOps ezh_cpu_reg = {
     .valid.min_access_size = 1,
     .valid.max_access_size = 1,
 };
-
-/*
- *  this function implements ST instruction when there is a possibility to write
- *  into a CPU register
- */
-void helper_fullwr(EZHCPUState *env, uint32_t data, uint32_t addr)
-{
-    env->fullacc = false;
-
-    switch (addr) {
-    case 0 ... 7:
-        /* CPU registers */
-        env->r[addr] = data;
-        break;
-    default:
-        do_stb(env, addr, data, GETPC());
-        break;
-    }
-}
