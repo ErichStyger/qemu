@@ -51,8 +51,8 @@ E_BCLR_IMM      001. .... 0000 00.. .... ..00 0001 1000 @op_rd_rs_bit5
 #E_BTOG_IMM(EZH_GPO, EZH_GPO, EZH_OP_1);  /* toggle pin */
 E_BTOG_IMM      111. .... 0000 00.. .... ..00 0001 1000 @op_rd_rs_bit5
   
-#define E_GOTO(a21) 0x15 + (1 << 9) + a21 * 512
+#define E_GOTO(a21) 0x15 + (1 << 9) + a21 * 512 == E_GOTO(a21) = 0x15 + (1 << 9) + (a21 << 9)
 #E_GOTO("loop");
 &a21            a21
-@op_a21         a21:21                    ... .... .... &a21
-E_GOTO          .... .... .... .... .... .010 0001 0101 @op_a21
+@op_a21         .. a21:21                   . .... .... &a21
+E_GOTO          00.. .... .... .... .... ...0 0001 0101 @op_a21

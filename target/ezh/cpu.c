@@ -120,8 +120,8 @@ static void ezh_cpu_reset_hold(Object *obj, ResetType type)
 
 static void ezh_cpu_disas_set_info(const CPUState *cpu, disassemble_info *info)
 {
-    info->endian = BFD_ENDIAN_BIG;
-    info->mach = bfd_arch_unknown;
+    info->endian = BFD_ENDIAN_LITTLE;
+    info->mach = bfd_arch_obscure;
     info->print_insn = ezh_print_insn;
 }
 
@@ -165,7 +165,7 @@ static void ezh_cpu_set_int(void *opaque, int irq, int level)
     }
 }
 
-static void ezh_cpu_initfn(Object *obj)
+static void ezh_cpu_instance_init(Object *obj)
 {
     EZHCPU *cpu = EZH_CPU(obj);
 
@@ -272,7 +272,7 @@ static const TypeInfo cpu_type_info = {
     .parent        = TYPE_CPU,
     .instance_size = sizeof(EZHCPU),
     .instance_align = __alignof(EZHCPU),
-    .instance_init = ezh_cpu_initfn,
+    .instance_init = ezh_cpu_instance_init,
     .class_size = sizeof(EZHCPUClass),
     .class_init = ezh_cpu_class_init,
 };

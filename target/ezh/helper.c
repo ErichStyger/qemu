@@ -71,11 +71,6 @@ bool ezh_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
     return false;
 }
 
-static void do_stb(EZHCPUState *env, uint32_t addr, uint8_t data, uintptr_t ra)
-{
-    cpu_stb_mmuidx_ra(env, addr, data, 0, ra);
-}
-
 void ezh_cpu_do_interrupt(CPUState *cs)
 {
     EZHCPUState *env = cpu_env(cs);
@@ -89,7 +84,7 @@ void ezh_cpu_do_interrupt(CPUState *cs)
         vector = ctz64(env->intsrc) + 1;
     }
 
-    do_stb(env, env->s_cpu_SP--, ret, 0);
+    cpu_stb_mmuidx_ra(env, env->s_cpu_SP--, ret, 0, 0);
 
     env->s_cpu_PC = base + vector;
 
