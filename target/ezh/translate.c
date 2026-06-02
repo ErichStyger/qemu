@@ -111,7 +111,7 @@ static const char reg_names[NUMBER_OF_CPU_REGISTERS][32] = {
 typedef struct DisasContext {
     DisasContextBase base;
 
-    CPUEZHState *env;   /* custom type */
+    EZHCPUState *env;   /* custom type */
     CPUState *cs;       /* QEMU-internal type*/
 
     target_long npc;    /* next program counter (pc) */
@@ -124,7 +124,7 @@ typedef struct DisasContext {
 
 void ezh_cpu_tcg_init(void)
 {
-#define EZH_REG_OFFS(x) offsetof(CPUEZHState, x)
+#define EZH_REG_OFFS(x) offsetof(EZHCPUState, x)
     cpu_GPO = tcg_global_mem_new_i32(tcg_env, EZH_REG_OFFS(s_cpu_GPO), "GPO");
     cpu_GPD = tcg_global_mem_new_i32(tcg_env, EZH_REG_OFFS(s_cpu_GPD), "GPD");
     cpu_GPI = tcg_global_mem_new_i32(tcg_env, EZH_REG_OFFS(s_cpu_GPI), "GPI");

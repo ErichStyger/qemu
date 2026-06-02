@@ -24,7 +24,7 @@
 
 int ezh_cpu_gdb_read_register(CPUState *cs, GByteArray *mem_buf, int n)
 {
-    CPUEZHState *env = cpu_env(cs);
+    EZHCPUState *env = cpu_env(cs);
 
     if (n < 8) {
         return gdb_get_reg32(mem_buf, env->r[n]);
@@ -52,7 +52,7 @@ int ezh_cpu_gdb_read_register(CPUState *cs, GByteArray *mem_buf, int n)
 
 int ezh_cpu_gdb_write_register(CPUState *cs, uint8_t *mem_buf, int n)
 {
-    CPUEZHState *env = cpu_env(cs);
+    EZHCPUState *env = cpu_env(cs);
 
     if (n < 8) {
         env->r[n] = ldl_be_p(mem_buf);

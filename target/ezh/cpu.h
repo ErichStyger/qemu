@@ -30,9 +30,6 @@
 
 #define CPU_RESOLVING_TYPE TYPE_EZH_CPU
 
-#define EXCP_RESET 1
-#define EXCP_INT(n) (EXCP_RESET + (n) + 1)
-
 /* Number of CPU scratch registers */
 #define NUMBER_OF_CPU_REGISTERS (8)
 
@@ -87,16 +84,16 @@ typedef struct CPUArchState {
     bool fullacc; /* CPU/MEM if true MEM only otherwise */
 
     uint64_t features;
-} CPUEZHState;
+} EZHCPUState;
 
 /**
  *  EZHCPU:
- *  @env: #CPUEZHState
+ *  @env: #EZHCPUState
  */
 struct ArchCPU {
     CPUState parent_obj;
 
-    CPUEZHState env;
+    EZHCPUState env;
 
     MemoryRegion cpu_reg;
 };
@@ -132,7 +129,7 @@ enum {
     TB_FLAGS_SKIP = 2,
 };
 
-static inline int cpu_interrupts_enabled(CPUEZHState *env)
+static inline int cpu_interrupts_enabled(EZHCPUState *env)
 {
     return 0;
 }

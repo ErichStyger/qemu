@@ -47,7 +47,7 @@ bool ezh_get_register(CPUState *cs, int64_t reg, int64_t *value) {
 
     EZHCPU *cpu;
     cpu = EZH_CPU(cs);
-    CPUEZHState *env = &cpu->env;
+    EZHCPUState *env = &cpu->env;
 
     switch (reg) {
     case EZH_R0:
@@ -77,7 +77,7 @@ bool ezh_set_register(CPUState *cs, int64_t reg, int64_t value) {
 
     EZHCPU *cpu;
     cpu = EZH_CPU(cs);
-    CPUEZHState *env = &cpu->env;
+    EZHCPUState *env = &cpu->env;
 
     switch (reg) {
     case EZH_R0:

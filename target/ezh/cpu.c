@@ -56,7 +56,7 @@ static int ezh_cpu_mmu_index(CPUState *cs, bool ifetch)
 
 static TCGTBCPUState ezh_get_tb_cpu_state(CPUState *cs)
 {
-    CPUEZHState *env = cpu_env(cs);
+    EZHCPUState *env = cpu_env(cs);
     uint32_t flags = 0;
 
     if (env->fullacc) {
@@ -89,7 +89,7 @@ static void ezh_cpu_reset_hold(Object *obj, ResetType type)
     CPUState *cs = CPU(obj);
     EZHCPU *cpu = EZH_CPU(cs);
     EZHCPUClass *mcc = EZH_CPU_GET_CLASS(obj);
-    CPUEZHState *env = &cpu->env;
+    EZHCPUState *env = &cpu->env;
 
     if (mcc->parent_phases.hold) {
         mcc->parent_phases.hold(obj, type);
@@ -128,7 +128,7 @@ static void ezh_cpu_disas_set_info(const CPUState *cpu, disassemble_info *info)
 static void ezh_cpu_realizefn(DeviceState *dev, Error **errp)
 {
     CPUState *cs = CPU(dev);
-    CPUEZHState *env = cpu_env(cs);
+    EZHCPUState *env = cpu_env(cs);
     EZHCPU *cpu = env_archcpu(env);
     EZHCPUClass *mcc = EZH_CPU_GET_CLASS(dev);
     Error *local_err = NULL;
@@ -150,7 +150,7 @@ static void ezh_cpu_realizefn(DeviceState *dev, Error **errp)
 static void ezh_cpu_set_int(void *opaque, int irq, int level)
 {
     EZHCPU *cpu = opaque;
-    CPUEZHState *env = &cpu->env;
+    EZHCPUState *env = &cpu->env;
     CPUState *cs = CPU(cpu);
     uint64_t mask = (1ull << irq);
 
@@ -181,7 +181,7 @@ static ObjectClass *ezh_cpu_class_by_name(const char *cpu_model)
 
 static void ezh_cpu_dump_state(CPUState *cs, FILE *f, int flags)
 {
-    CPUEZHState *env = cpu_env(cs);
+    EZHCPUState *env = cpu_env(cs);
     int i;
 
     qemu_fprintf(f, "\n");

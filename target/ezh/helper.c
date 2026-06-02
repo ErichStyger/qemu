@@ -30,9 +30,12 @@
 #include "exec/helper-proto.h"
 #include "qemu/plugin.h"
 
+#define EXCP_RESET 1
+#define EXCP_INT(n) (EXCP_RESET + (n) + 1)
+
 bool ezh_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
 {
-    CPUEZHState *env = cpu_env(cs);
+    EZHCPUState *env = cpu_env(cs);
 
     /*
      * We cannot separate a skip from the next instruction,
@@ -68,14 +71,14 @@ bool ezh_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
     return false;
 }
 
-static void do_stb(CPUEZHState *env, uint32_t addr, uint8_t data, uintptr_t ra)
+static void do_stb(EZHCPUState *env, uint32_t addr, uint8_t data, uintptr_t ra)
 {
     cpu_stb_mmuidx_ra(env, addr, data, 0, ra);
 }
 
 void ezh_cpu_do_interrupt(CPUState *cs)
 {
-    CPUEZHState *env = cpu_env(cs);
+    EZHCPUState *env = cpu_env(cs);
     uint32_t ret = env->s_cpu_PC;
     int vector = 0;
     int base = 0;
@@ -116,7 +119,7 @@ bool ezh_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
     return true;
 }
 
-void helper_sleep(CPUEZHState *env)
+void helper_sleep(EZHCPUState *env)
 {
     CPUState *cs = env_cpu(env);
 
@@ -124,7 +127,7 @@ void helper_sleep(CPUEZHState *env)
     cpu_loop_exit(cs);
 }
 
-void helper_unsupported(CPUEZHState *env)
+void helper_unsupported(EZHCPUState *env)
 {
     CPUState *cs = env_cpu(env);
 
@@ -140,7 +143,7 @@ void helper_unsupported(CPUEZHState *env)
     cpu_loop_exit(cs);
 }
 
-void helper_debug(CPUEZHState *env)
+void helper_debug(EZHCPUState *env)
 {
     CPUState *cs = env_cpu(env);
 
@@ -148,7 +151,7 @@ void helper_debug(CPUEZHState *env)
     cpu_loop_exit(cs);
 }
 
-void helper_break(CPUEZHState *env)
+void helper_break(EZHCPUState *env)
 {
     CPUState *cs = env_cpu(env);
 
@@ -156,7 +159,7 @@ void helper_break(CPUEZHState *env)
     cpu_loop_exit(cs);
 }
 
-void helper_wdr(CPUEZHState *env)
+void helper_wdr(EZHCPUState *env)
 {
     qemu_log_mask(LOG_UNIMP, "WDG reset (not implemented)\n");
 }
@@ -172,7 +175,7 @@ void helper_wdr(CPUEZHState *env)
 
 static uint64_t ezh_cpu_reg_read(void *opaque, hwaddr addr, unsigned size)
 {
-    CPUEZHState *env = opaque;
+    EZHCPUState *env = opaque;
 
     assert(addr < 32);
     return env->r[addr];
@@ -181,7 +184,7 @@ static uint64_t ezh_cpu_reg_read(void *opaque, hwaddr addr, unsigned size)
 static void ezh_cpu_trap_write(void *opaque, hwaddr addr,
                                uint64_t data64, unsigned size)
 {
-    CPUEZHState *env = opaque;
+    EZHCPUState *env = opaque;
     CPUState *cs = env_cpu(env);
 
     env->fullacc = true;
@@ -200,7 +203,7 @@ const MemoryRegionOps ezh_cpu_reg = {
  *  this function implements ST instruction when there is a possibility to write
  *  into a CPU register
  */
-void helper_fullwr(CPUEZHState *env, uint32_t data, uint32_t addr)
+void helper_fullwr(EZHCPUState *env, uint32_t data, uint32_t addr)
 {
     env->fullacc = false;
 
