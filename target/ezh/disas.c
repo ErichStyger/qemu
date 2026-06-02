@@ -40,32 +40,22 @@ int ezh_print_insn(bfd_vma addr, disassemble_info *info)
     DisasContext ctx = { info };
     DisasContext *pctx = &ctx;
     bfd_byte buffer[4];
-    uint16_t insn;
+    uint32_t insn;
     int status;
 
-    status = info->read_memory_func(addr, buffer, 2, info);
+    status = info->read_memory_func(addr, buffer, sizeof(buffer), info);
     if (status != 0) {
         info->memory_error_func(status, addr, info);
         return -1;
     }
-    insn = bfd_getl16(buffer);
 
-    status = info->read_memory_func(addr + 2, buffer + 2, 2, info);
-    if (status == 0) {
-        ctx.next_word = bfd_getl16(buffer + 2);
-    }
+    insn = bfd_getl32(buffer);
 
     if (!decode_insn(&ctx, insn)) {
-        output(".db", "0x%02x, 0x%02x", buffer[0], buffer[1]);
+        output(".long", "0x%08x", insn);
     }
 
-    if (!ctx.next_word_used) {
-        return 2;
-    } else if (status == 0) {
-        return 4;
-    }
-    info->memory_error_func(status, addr + 2, info);
-    return -1;
+    return 4;
 }
 
 
