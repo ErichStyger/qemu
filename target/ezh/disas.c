@@ -1,8 +1,9 @@
 /*
- * AVR disassembler
+ * EZH disassembler
  *
  * Copyright (c) 2019-2020 Richard Henderson <rth@twiddle.net>
  * Copyright (c) 2019-2020 Michael Rolnik <mrolnik@gmail.com>
+ * Copyright (c) 2026 Stefano Nicora
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
