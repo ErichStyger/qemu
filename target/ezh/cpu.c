@@ -209,7 +209,7 @@ static void ezh_cpu_dump_state(CPUState *cs, FILE *f, int flags)
     for (i = 0; i < ARRAY_SIZE(env->r); i++) {
         qemu_fprintf(f, "R[%02d]:  %02x   ", i, env->r[i]);
 
-        if ((i % 8) == 7) {
+        if ((i == 3)) {
             qemu_fprintf(f, "\n");
         }
     }

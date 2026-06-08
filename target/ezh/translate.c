@@ -149,7 +149,7 @@ void ezh_cpu_tcg_init(void)
         cpu_r[i] = tcg_global_mem_new_i32(tcg_env, EZH_REG_OFFS(r[i]),
                                           reg_names[i]);
     }
-#undef AVR_REG_OFFS
+#undef EZH_REG_OFFS
 }
 
 static uint32_t next_insn(DisasContext *ctx)
@@ -367,12 +367,18 @@ static bool trans_E_NOP(DisasContext *ctx, arg_E_NOP *a)
 
 /* 
  * Used for branching using immediate addressing
+ * the 21 bit address contains the PC as its 9 MSB
  */
 static bool trans_E_GOTO(DisasContext *ctx, arg_E_GOTO *a)
 {
-    // todo
-    // gen_goto_tb(ctx, 0, a->imm);
+    #if DEBUG == 1
+    qemu_log("\ntrans_E_GOTO called");
+    qemu_log("\na21:   0x%x", a->a21);
+    #endif
+    uint32_t target = a->a21 & 0x1fffffc;
+    gen_goto_tb(ctx, 0, target);
     ctx->env->s_cpu_IC += 1;
+    ctx->base.is_jmp = DISAS_CHAIN;
     return true;
 }
 
