@@ -55,34 +55,34 @@ int ezh_cpu_gdb_write_register(CPUState *cs, uint8_t *mem_buf, int n)
     EZHCPUState *env = cpu_env(cs);
 
     if (n < 8) {
-        env->r[n] = ldl_be_p(mem_buf);
+        env->r[n] = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 8){
-        env->s_cpu_GPO = ldl_be_p(mem_buf);
+        env->s_cpu_GPO = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 9){
-        env->s_cpu_GPD = ldl_be_p(mem_buf);
+        env->s_cpu_GPD = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 10){
-        env->s_cpu_GPI = ldl_be_p(mem_buf);
+        env->s_cpu_GPI = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 11){
-        env->s_cpu_CFS = ldl_be_p(mem_buf);
+        env->s_cpu_CFS = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 12){
-        env->s_cpu_CFM = ldl_be_p(mem_buf);
+        env->s_cpu_CFM = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 13){
-        env->s_cpu_SP = ldl_be_p(mem_buf);
+        env->s_cpu_SP = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 14){
-        env->s_cpu_PC = ldl_be_p(mem_buf);
+        env->s_cpu_PC = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 15){
-        env->s_cpu_RA = ldl_be_p(mem_buf);
+        env->s_cpu_RA = ldl_le_p(mem_buf);
         return 1;
     } else if ( n == 16){
-        env->s_cpu_IC = ldl_be_p(mem_buf);
+        env->s_cpu_IC = ldl_le_p(mem_buf);
         return 1;
     }
 
