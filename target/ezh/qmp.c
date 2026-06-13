@@ -40,6 +40,14 @@
 #define EZH_GPI  0x0e
 #define EZH_RA   0x0f
 
+/*  {
+        "execute": "ezh-get-register",
+        "arguments": {
+        "reg": N
+        }
+    }
+  */
+
 bool ezh_get_register(CPUState *cs, int64_t reg, int64_t *value) {
     if (!object_dynamic_cast(OBJECT(cs), TYPE_EZH_CPU)) {
         return false;
@@ -69,6 +77,15 @@ bool ezh_get_register(CPUState *cs, int64_t reg, int64_t *value) {
     default: return false;
     }
 }
+
+/*  {
+        "execute": "ezh-set-register",
+        "arguments": {
+            "reg": N,
+            "value": N
+        }
+    }
+*/
 
 bool ezh_set_register(CPUState *cs, int64_t reg, int64_t value) {
     if (!object_dynamic_cast(OBJECT(cs), TYPE_EZH_CPU)) {
